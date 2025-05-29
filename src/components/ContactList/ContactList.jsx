@@ -1,37 +1,39 @@
-import { useMemo } from 'react'
+import { useSelector, useDispatch } from 'react-redux';
 
-import { useSelector, useDispatch } from 'react-redux'
-import { selectContacts, deleteContact } from '../../redux/contactsSlice'
-import { selectNameFilter } from '../../redux/filtersSlice'
+import { selectFilteredContacts, selectLoading, selectError } from '../../redux/contactsSlice';
+import { deleteContact } from '../../redux/contactsOps';
 
-import styles from './ContactList.module.css'
+import styles from './ContactList.module.css';
 
-import Contact from './Contact'
+import Contact from './Contact';
 
 const ContactList = () => {
   const dispatch = useDispatch();
-  
-  const contacts = useSelector(selectContacts)
-  const filter = useSelector(selectNameFilter)
 
-  const filteredContacts = useMemo(
-    () => contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    ),
-    [filter, contacts]
-  )
+  const contacts = useSelector(selectFilteredContacts);
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
 
-    const handleDeliteContact = (id) => {
-      dispatch(deleteContact(id))
-    }
+  const handleDeliteContact = (id) => {
+    dispatch(deleteContact(id));
+  };
+
+  if (loading) {
+    return <p className={styles.loading}>Loading contacts...</p>;
+  }
 
   return (
-    <ul className={styles.list}>
-      {filteredContacts.map((contact) => (
-        <li key={contact.id}><Contact {...contact} handleDeliteContact={handleDeliteContact} /></li>
-      ))}
-    </ul>
-  )
-}
+    <>
+      {error ? <p className={styles.error}>Error: {error}</p> : null}
+      <ul className={styles.list}>
+        {contacts.map((contact) => (
+          <li key={contact.id}>
+            <Contact {...contact} handleDeliteContact={handleDeliteContact} />
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
 
-export default ContactList
+export default ContactList;

@@ -18,3 +18,16 @@
 .icon {
   margin-right: 10px;
 }
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}
